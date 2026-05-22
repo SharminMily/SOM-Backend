@@ -1,18 +1,19 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
+import { userController } from './user.controller.js';
 
 
 const router = express.Router();
 
 
-// router.get('/', userController.getAllUsersFromDB);
+router.get('/', userController.getAllUsersFromDB);
 // router.get('/:id', userController.getSingleUserFromDB);
-router.delete(
-  '/:id',
-  //auth(Role.ADMIN),
+// router.delete(
+//   '/:id',
+//   auth(Role.ADMIN),
 //   userController.deleteUserFromDB,
-);
-router.post(
-  '/register',
+// );
+// router.post(
+//   '/register',
 //   fileUploads.upload.single('file'),
 //   async (req: Request, res: Response, next: NextFunction) => {
 //     try {
@@ -33,6 +34,6 @@ router.post(
 //       next(error);
 //     }
 //   },
-);
+// );
 
 export const userRouter = router;

@@ -16,3 +16,6 @@
 -----------problem solved------
 1. package.json e  "type": "module" na thakay server.ts e express e error ascilo.
 2.
+
+
+   "postinstall": "npx prisma generate",

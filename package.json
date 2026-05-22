@@ -5,9 +5,12 @@
    "description": "",
    "main": "dist/server.js",
    "devDependencies": {
+      "@prisma/client": "^7.8.0",
+      "@types/bcrypt": "^6.0.0",
       "@types/express": "^5.0.6",
       "@types/jsonwebtoken": "^9.0.10",
-      "@types/node": "^25.8.0",
+      "@types/node": "^25.9.1",
+      "prisma": "^7.8.0",
       "ts-node-dev": "^2.0.0",
       "typescript": "^6.0.3"
    },
@@ -15,11 +18,12 @@
       "dev": "npx tsx --watch src/server.ts",
       "build": "tsc",
       "start": "node dist/server.js",
-      "lint": "eslint src/**/*.ts",
-      "lint:fix": "eslint src/**/*.ts --fix",
+      "type-check:root": "tsc -p tsconfig.root.json",
       "test": "echo \"Error: no test specified\" && exit 1"
    },
    "dependencies": {
+      "@prisma/adapter-pg": "^7.8.0",
+      "bcrypt": "^6.0.0",
       "dotenv": "^17.4.2",
       "express": "^5.2.1",
       "http-status": "^2.1.0",
