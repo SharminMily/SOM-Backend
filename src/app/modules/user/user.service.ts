@@ -3,7 +3,7 @@
 import bcrypt from 'bcrypt';
 
 import { prisma } from '../../shared/prisma.js';
-import type { CreateUserDto, UpdateUserDto, UserResponse } from './user.interface.js';
+import { publicUserSelectFields, type TUserPayload,  } from './user.interface.js';
 import { Role } from '../../constants/enums.js';
 import AppError from '../../errors/AppError.js';
 import { jwtHelpers } from '../../helpers/jwtHelpers.js';
@@ -15,7 +15,7 @@ import config from '../../config/index.js';
 // createUserIntoDB
 
 
-const createUserIntoDB = async (userData: CreateUserDto) => {
+const createUserIntoDB = async (userData: TUserPayload) => {
   const { password, ...restData } = userData;
   try {
     const existingUser = await prisma.user.findUnique({
@@ -86,32 +86,48 @@ const createUserIntoDB = async (userData: CreateUserDto) => {
 };
 
 
-
-
-
-
-
-
-
 // get User
-
 const getAllUsersFromDB = async () => {
-//   const result = await prisma.user.findMany({
-//     select: publicUserSelectFields,
-//   });
-  return ;
+  const result = await prisma.user.findMany({
+    select: publicUserSelectFields,
+  });
+  return result;
+};
+// get single user by id
+const getSingleUserFromDB = async (id: string) => {
+  const result = await prisma.user.findUniqueOrThrow({
+    
+    where: { id },  
+    select: publicUserSelectFields,
+   
+  });
+  if (result.status === 'SUSPENDED') {
+    throw new AppError(403, 'User is blocked');
+  }
+  return result;
 };
 
-// get single user by id
-
 // delete user
-
-//update user
-
+const deleteUserFromDB = async (id: string) => {
+  const userData = await prisma.user.findFirstOrThrow({
+    where: {
+      id,
+    },
+  });
+  if (userData.status === 'SUSPENDED') {
+    throw new AppError(403, 'User is blocked');
+  }
+  const result = await prisma.user.delete({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
 
 export const userService = {
   createUserIntoDB,
+  getSingleUserFromDB,
   getAllUsersFromDB,
-//   getSingleUserFromDB,
-//   deleteUserFromDB,
+  deleteUserFromDB,
 };

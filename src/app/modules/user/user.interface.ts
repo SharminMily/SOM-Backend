@@ -6,7 +6,7 @@ import type { Role, UserStatus } from "../../constants/enums.js";
 // src/modules/user/user.types.ts
 
 
-export interface CreateUserDto {
+export type TUserPayload = {
   email: string;
   password: string;
   firstName: string;
@@ -28,22 +28,22 @@ export interface UpdateUserDto {
   status?: UserStatus;
 }
 
-export interface UserResponse {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string | null;
-  avatarUrl?: string | null;
-  role: Role;
-  status: UserStatus;
-  departmentId?: string | null;
-  managerId?: string | null;
-  joinedDate?: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
+export const publicUserSelectFields = {
+  id: true,
+  email: true,
+  firstName: true,
+  lastName: true,
+  phone: true,
+  avatarUrl: true,
+  role: true,
+  status: true,
+  departmentId: true,
+  managerId: true,
+  joinedDate: true,
+  createdAt: true,
+  updatedAt: true,
+  // excluded: password
+} as const;
 
 
 

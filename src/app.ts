@@ -7,6 +7,10 @@ import globalErrorHandler from './app/middlewares/globalErrorhandler.js';
 
 const app: Application = express();
 
+app.use(express.json());                    // Parses JSON bodies
+app.use(express.urlencoded({ extended: true }));
+
+
 app.get('/', (req: Request, res: Response) => {
   res.status(status.OK).json({
     success: true,
