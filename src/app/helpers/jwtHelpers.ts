@@ -6,7 +6,7 @@ import AppError from '../errors/AppError.js';
 interface CustomPayload {
   id: string;
   name?: string;
-  role?: 'USER' | 'ADMIN';
+  role?: 'ADMIN' | 'MANAGER' | 'EMPLOYEE';
   email?: string;
   profileImage?: string | null;
 }
