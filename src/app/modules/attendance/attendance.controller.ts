@@ -38,4 +38,11 @@ const overrideAttendance = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'Attendance updated successfully', data: result });
 });
 
-export const attendanceController = { clockIn, clockOut, getMyAttendance, getUserAttendance, getDepartmentAttendance, overrideAttendance };
+export const attendanceController = {
+   clockIn, 
+   clockOut, 
+   getMyAttendance, 
+   getUserAttendance, 
+   getDepartmentAttendance, 
+   overrideAttendance 
+  };
