@@ -41,4 +41,4 @@ router.post('/', userController.createUserIntoDB);
 //   },
 // );
 
-export const userRouter = router;
+export const userRoute = router;
