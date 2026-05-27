@@ -7,9 +7,6 @@ import config from '../../config/index.js';
 import AppError from '../../errors/AppError.js';
 
 
-
-
-
 const createUserIntoDB = catchAsync(async (req: Request, res: Response) => {
 
   if (!req.body || !req.body.email || !req.body.password) {
@@ -33,11 +30,6 @@ const createUserIntoDB = catchAsync(async (req: Request, res: Response) => {
     },
   });
 });
-
-
-
-
-
 
 
 // getAllUsersFromDB
@@ -65,6 +57,9 @@ const getSingleUserFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+// update user by id
+
 // delete user
 const deleteUserFromDB = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id as string;
@@ -77,8 +72,6 @@ const deleteUserFromDB = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
-
 
 
 export const userController = {

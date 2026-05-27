@@ -10,7 +10,10 @@ import { projectValidation } from './projects.validation.js';
 const router = Router();
 
 router.get('/', authMiddleware, projectController.getAllProjects);
-router.post('/', authMiddleware, requireRole('ADMIN', 'MANAGER'), validateRequest(projectValidation.createProjectSchema), projectController.createProject);
+
+router.post('/', authMiddleware, requireRole('ADMIN', 'MANAGER'), 
+validateRequest(projectValidation.createProjectSchema), projectController.createProject);
+
 router.get('/:id', authMiddleware, projectController.getProjectById);
 router.patch('/:id', authMiddleware, requireRole('ADMIN', 'MANAGER'), validateRequest(projectValidation.updateProjectSchema), projectController.updateProject);
 router.delete('/:id', authMiddleware, requireRole('ADMIN'), projectController.deleteProject);

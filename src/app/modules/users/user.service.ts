@@ -107,6 +107,7 @@ const getSingleUserFromDB = async (id: string) => {
   return result;
 };
 
+// update user by id
 // delete user
 const deleteUserFromDB = async (id: string) => {
   const userData = await prisma.user.findFirstOrThrow({
