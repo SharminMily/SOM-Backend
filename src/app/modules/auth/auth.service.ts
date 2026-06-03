@@ -309,6 +309,38 @@ const changePassword = async (
   });
 };
 
+
+
+const getCurrentUser = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      role: true,
+      status: true,
+      avatarUrl: true,
+      emailVerified: true,
+      createdAt: true,
+      updatedAt: true,      
+    },
+  });
+  // console.log('Fetched user from DB:', user);
+
+  if (!user) {
+    throw new AppError(404, 'User not found');
+  }
+
+  if (user.status === 'SUSPENDED') {
+    throw new AppError(403, 'Your account is suspended');
+  }
+
+  return user;
+};
+
+
 export const authService = {
   loginUser,
   refreshAccessToken,
@@ -317,4 +349,5 @@ export const authService = {
   forgotPassword,
   resetPassword,
   changePassword,
+  getCurrentUser
 };

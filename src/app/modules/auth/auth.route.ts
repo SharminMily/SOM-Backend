@@ -2,11 +2,13 @@ import { Router } from 'express';
 import { authController } from './auth.controller.js';
 import validateRequest from '../../middlewares/validateRequest.js';
 import { authValidation } from './auth.validation.js';
+import authMiddleware from '../../middlewares/authMiddleware.js';
+import requireRole from '../../middlewares/requireRole.js';
 
 const router = Router();
 
 // public routes
-router.post('/login', authController.loginUser);
+router.post('/login',  authController.loginUser);
 
 router.post('/refresh', authController.refreshToken);
 
@@ -25,5 +27,8 @@ router.post(
   validateRequest(authValidation.resetPasswordSchema),
   authController.resetPassword,
 );
+
+router.get('/me', authMiddleware, requireRole('ADMIN','MANAGER', "EMPLOYEE"),  authController.getCurrentUser);
+//authMiddleware, requireRole('ADMIN','MANAGER', "EMPLOYEE"),
 
 export const authRoute = router;
