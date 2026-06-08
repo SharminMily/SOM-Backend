@@ -90,7 +90,7 @@ const createUserIntoDB = async (userData: TUserPayload) => {
 const getAllUsersFromDB = async () => {
   const result = await prisma.user.findMany({
     select: publicUserSelectFields,
-  });
+   });
   return result;
 };
 // get single user by id
@@ -125,7 +125,6 @@ const deleteUserFromDB = async (id: string) => {
   });
   return result;
 };
-
 
 
 export const userService = {

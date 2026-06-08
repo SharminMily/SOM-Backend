@@ -16,9 +16,26 @@ const clockOut = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMyAttendance = catchAsync(async (req: Request, res: Response) => {
-  const { month, year } = req.query;
-  const result = await attendanceService.getMyAttendance(req.user?.id as string, Number(month), Number(year));
-  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'Attendance fetched successfully', data: result });
+  const month = req.query.month
+    ? Number(req.query.month)
+    : undefined;
+
+  const year = req.query.year
+    ? Number(req.query.year)
+    : undefined;
+
+  const result = await attendanceService.getMyAttendance(
+    req.user?.id as string,
+    month,
+    year
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Attendance fetched successfully",
+    data: result,
+  });
 });
 
 const getUserAttendance = catchAsync(async (req: Request, res: Response) => {

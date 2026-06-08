@@ -52,7 +52,7 @@ const moduleRoutes = [
      route: payrollRoutes,
   },
   {
-     path: '/task',
+     path: '/tasks',
      route: taskRoutes,
   },
 ];

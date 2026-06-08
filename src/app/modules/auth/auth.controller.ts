@@ -7,19 +7,18 @@ import { authService } from './auth.service.js';
 import config from '../../config/index.js';
 import sendResponse from '../../helpers/sendResponse.js';
 import httpStatus from 'http-status';
-import type { IAuthenticatedUser } from './auth.interface.js';
 // login
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const result = await authService.loginUser(req.body);
   const { refreshToken } = result;
 
-  res.cookie('refreshToken', refreshToken, {
-    secure: config.node_env === 'production',
-   httpOnly: true,
+ res.cookie('auth-token', result.accessToken, {
+  secure: config.node_env === 'production',
+  httpOnly: true,
   sameSite: "lax",
   path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+});
 
   sendResponse(res, {
     success: true,

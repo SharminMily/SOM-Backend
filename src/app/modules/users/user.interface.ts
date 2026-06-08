@@ -36,6 +36,20 @@ export const publicUserSelectFields = {
   phone: true,
   avatarUrl: true,
   role: true,
+    department: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+ manager: {
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+    },
+  },
   status: true,
   departmentId: true,
   managerId: true,
