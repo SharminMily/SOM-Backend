@@ -9,7 +9,7 @@ import { taskValidation } from './tasks.validation.js';
 
 const router = Router();
 
-router.get('/project/:projectId', authMiddleware, taskController.getProjectTasks);
+router.get('/project/:projectId',authMiddleware, requireRole('ADMIN', 'MANAGER'), authMiddleware, taskController.getProjectTasks);
 
 router.post('/project/:projectId', authMiddleware, requireRole('ADMIN', 'MANAGER'), validateRequest(taskValidation.createTaskSchema), taskController.createTask);
 

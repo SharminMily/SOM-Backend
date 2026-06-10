@@ -15,4 +15,11 @@ router.get('/user/:id', authMiddleware, requireRole('ADMIN', 'MANAGER'), attenda
 router.get('/department/:id', authMiddleware, requireRole('ADMIN', 'MANAGER'), attendanceController.getDepartmentAttendance);
 router.patch('/:id', authMiddleware, requireRole('ADMIN'), validateRequest(attendanceValidation.overrideSchema), attendanceController.overrideAttendance);
 
+router.get(
+  "/stats/:departmentId",
+  authMiddleware,
+  requireRole("ADMIN", "MANAGER"),
+  attendanceController.getAttendanceStats
+);
+
 export const attendanceRoutes = router;

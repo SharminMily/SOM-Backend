@@ -112,6 +112,41 @@ const overrideAttendance = async (id: string, data: TOverrideAttendancePayload) 
   });
 };
 
+
+
+const getAttendanceStats = async (
+  departmentId: string
+) => {
+  const today = getTodayDate();
+
+  const records =
+    await prisma.attendance.findMany({
+      where: {
+        user: {
+          departmentId,
+        },
+        date: today,
+      },
+    });
+
+  return {
+    total: records.length,
+
+    present: records.filter(
+      (r) => r.status === "PRESENT"
+    ).length,
+
+    late: records.filter(
+      (r) => r.status === "LATE"
+    ).length,
+
+    absent: records.filter(
+      (r) => r.status === "ABSENT"
+    ).length,
+  };
+};
+
+
 export const attendanceService = {
   clockIn,
   clockOut,
@@ -119,4 +154,5 @@ export const attendanceService = {
   getUserAttendance,
   getDepartmentAttendance,
   overrideAttendance,
+  getAttendanceStats
 };

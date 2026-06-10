@@ -4,6 +4,7 @@ import catchAsync from '../../helpers/catchAsync.js';
 
 import { attendanceService } from './attendance.service.js';
 import sendResponse from '../../helpers/sendResponse.js';
+import AppError from '../../errors/AppError.js';
 
 const clockIn = catchAsync(async (req: Request, res: Response) => {
   const result = await attendanceService.clockIn(req.user?.id as string, req.body.note);
@@ -55,11 +56,36 @@ const overrideAttendance = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'Attendance updated successfully', data: result });
 });
 
+
+
+const getAttendanceStats = catchAsync(
+  async (req: Request, res: Response) => {
+
+    const departmentId = req.params.departmentId;
+
+    if (!departmentId || Array.isArray(departmentId)) {
+  throw new AppError(400, "Invalid department id");
+}
+
+const result =
+  await attendanceService.getAttendanceStats(departmentId);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Attendance stats fetched successfully",
+      data: result,
+    });
+  }
+);
+
+
 export const attendanceController = {
    clockIn, 
    clockOut, 
    getMyAttendance, 
    getUserAttendance, 
    getDepartmentAttendance, 
-   overrideAttendance 
+   overrideAttendance,
+   getAttendanceStats    
   };
