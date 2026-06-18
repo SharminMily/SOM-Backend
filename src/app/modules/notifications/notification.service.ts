@@ -3,10 +3,18 @@ import AppError from '../../errors/AppError.js';
 import { notificationSelectFields, type TCreateNotificationPayload } from './notification.interface.js';
 
 // create single notification (used internally by other services)
-const createNotification = async (data: TCreateNotificationPayload) => {
+const createNotification = async (
+  data: TCreateNotificationPayload
+) => {
+  console.log("userId here:", data.userId);
+
   return prisma.notification.create({
-    data,
-    select: notificationSelectFields,
+    data: {
+      userId: data.userId,
+      title: data.title,
+      message: data.message,
+      type: data.type,
+    },
   });
 };
 
@@ -16,18 +24,26 @@ const createManyNotifications = async (data: TCreateNotificationPayload[]) => {
 };
 
 // get own notifications with pagination
-const getMyNotifications = async (userId: string, page = 1, limit = 20) => {
+const getMyNotifications = async (userId: string, page = 1, limit = 20, type?: string) => {
   const skip = (page - 1) * limit;
+
+    const whereClause: any = {
+    userId,
+  };
+
+  if (type) {
+    whereClause.type = type;
+  }
 
   const [notifications, total] = await Promise.all([
     prisma.notification.findMany({
-      where: { userId },
+       where: whereClause,
       select: notificationSelectFields,
       orderBy: { createdAt: 'desc' },
       skip,
       take: limit,
     }),
-    prisma.notification.count({ where: { userId } }),
+    prisma.notification.count({  where: whereClause }),
   ]);
 
   return {

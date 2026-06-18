@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { notificationController } from './notification.controller.js';
 import authMiddleware from '../../middlewares/authMiddleware.js';
+import requireRole from '../../middlewares/requireRole.js';
 
 const router = Router();
 
@@ -10,11 +11,18 @@ router.get('/me', authMiddleware, notificationController.getMyNotifications);
 // GET /api/notifications/me/unread-count
 router.get('/me/unread-count', authMiddleware, notificationController.getUnreadCount);
 
+router.post(
+  '/',
+  authMiddleware,
+  requireRole('ADMIN', 'MANAGER'),
+  notificationController.createNotification
+);
+
 // PATCH /api/notifications/:id/read
 router.patch('/:id/read', authMiddleware, notificationController.markAsRead);
 
 // PATCH /api/notifications/me/read-all
-router.patch('/me/read-all', authMiddleware, notificationController.markAsRead);
+router.patch('/me/read-all', authMiddleware, notificationController.markAllAsRead);
 
 
 export const notificationRoutes = router;

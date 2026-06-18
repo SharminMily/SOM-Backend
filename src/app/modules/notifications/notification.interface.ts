@@ -1,7 +1,7 @@
 import type { NotificationType } from '../../constants/enums.js';
 
 export interface TCreateNotificationPayload {
-  userId: string;
+  userId?: string;
   title: string;
   message: string;
   type: NotificationType;
