@@ -9,7 +9,17 @@ const router = Router();
 
 router.post('/requests', authMiddleware, validateRequest(leaveValidation.applyLeaveSchema), leaveController.applyForLeave);
 router.get('/requests', authMiddleware, requireRole('ADMIN', 'MANAGER'), leaveController.getAllLeaveRequests);
+
+
+router.get(
+  "/requests/me",
+  authMiddleware,
+  leaveController.getMyLeaveRequests
+);
+
+
 router.get('/requests/:id', authMiddleware, leaveController.getSingleLeaveRequest);
+
 router.patch('/requests/:id/approve', authMiddleware, requireRole('ADMIN', 'MANAGER'), leaveController.approveLeave);
 router.patch('/requests/:id/reject', authMiddleware, requireRole('ADMIN','MANAGER'), validateRequest(leaveValidation.rejectLeaveSchema), leaveController.rejectLeave);
 router.delete('/requests/:id', authMiddleware, leaveController.cancelLeave);

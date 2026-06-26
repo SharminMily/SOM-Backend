@@ -6,7 +6,6 @@ import sendResponse from '../../helpers/sendResponse.js';
 import AppError from '../../errors/AppError.js';
 
 
-
 // Create Notification
 const createNotification = catchAsync(
   async (req: Request, res: Response) => {
@@ -92,10 +91,37 @@ const markAllAsRead = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+const getAllNotifications =
+  catchAsync(
+    async (req, res) => {
+      const page =
+        Number(req.query.page) || 1;
+
+      const limit =
+        Number(req.query.limit) || 20;
+
+      const result =
+        await notificationService.getAllNotifications(
+          page,
+          limit
+        );
+
+      sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message:
+          "All notifications fetched",
+        data: result,
+      });
+    }
+  );
+
 export const notificationController = {
   createNotification,
   getMyNotifications,
   getUnreadCount,
   markAsRead,
   markAllAsRead,
+  getAllNotifications
 };

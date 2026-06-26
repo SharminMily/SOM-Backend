@@ -91,4 +91,21 @@ const deleteComment = async (commentId: string, userId: string, role: string) =>
   return prisma.taskComment.delete({ where: { id: commentId } });
 };
 
-export const taskService = { getProjectTasks, createTask, getTaskById, updateTask, deleteTask, getTaskComments, addComment, deleteComment };
+
+const getMyTasks = async (userId: string) => {
+  return prisma.task.findMany({
+    where: {
+      assignedToId: userId,
+    },
+    select: taskSelectFields,
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+};
+
+
+export const taskService = { getProjectTasks, createTask, getTaskById, updateTask, deleteTask, getTaskComments, addComment, deleteComment ,
+  getMyTasks
+  
+};

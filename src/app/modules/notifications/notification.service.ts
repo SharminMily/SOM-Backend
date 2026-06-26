@@ -89,6 +89,54 @@ const markAllAsRead = async (userId: string) => {
   return { updated: result.count };
 };
 
+
+
+const getAllNotifications = async (
+  page = 1,
+  limit = 20
+) => {
+  const skip = (page - 1) * limit;
+
+  const [notifications, total] =
+    await Promise.all([
+      prisma.notification.findMany({
+        select: {
+          id: true,
+          title: true,
+          message: true,
+          type: true,
+          isRead: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip,
+        take: limit,
+      }),
+
+      prisma.notification.count(),
+    ]);
+
+  return {
+    notifications,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(
+      total / limit
+    ),
+  };
+};
+
 export const notificationService = {
   createNotification,
   createManyNotifications,
@@ -96,4 +144,5 @@ export const notificationService = {
   getUnreadCount,
   markAsRead,
   markAllAsRead,
+  getAllNotifications
 };

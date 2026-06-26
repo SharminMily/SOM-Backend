@@ -14,6 +14,20 @@ const getAllLeaveRequests = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'Leave requests fetched', data: result });
 });
 
+const getMyLeaveRequests = catchAsync(async (req, res) => {
+  const result = await leaveService.getMyLeaveRequests(
+    req.user?.id as string
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "My leave requests fetched",
+    data: result,
+  });
+});
+
+
 const getSingleLeaveRequest = catchAsync(async (req: Request, res: Response) => {
   const result = await leaveService.getSingleLeaveRequest(req.params.id as string);
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'Leave request fetched', data: result });
@@ -49,4 +63,15 @@ const adjustLeaveBalance = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'Leave balance adjusted', data: result });
 });
 
-export const leaveController = { applyForLeave, getAllLeaveRequests, getSingleLeaveRequest, approveLeave, rejectLeave, cancelLeave, getMyLeaveBalance, getUserLeaveBalance, adjustLeaveBalance };
+export const leaveController = { 
+  applyForLeave,
+  getAllLeaveRequests, 
+  getSingleLeaveRequest, 
+  getMyLeaveRequests,
+  approveLeave, 
+  rejectLeave, 
+  cancelLeave, 
+  getMyLeaveBalance, 
+  getUserLeaveBalance, 
+  adjustLeaveBalance 
+};

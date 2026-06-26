@@ -13,6 +13,13 @@ router.get('/project/:projectId',authMiddleware, requireRole('ADMIN', 'MANAGER')
 
 router.post('/project/:projectId', authMiddleware, requireRole('ADMIN', 'MANAGER'), validateRequest(taskValidation.createTaskSchema), taskController.createTask);
 
+router.get(
+  '/my',
+  authMiddleware,
+  requireRole('EMPLOYEE'),
+  taskController.getMyTasks
+);
+
 router.get('/:id', authMiddleware, taskController.getTaskById);
 
 router.patch('/:id', authMiddleware, validateRequest(taskValidation.updateTaskSchema), taskController.updateTask);

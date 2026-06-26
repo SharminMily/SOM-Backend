@@ -42,12 +42,23 @@ const getAllLeaveRequests = async (userId: string, role: string, query: { status
     where,
     select: leaveSelectFields,
     orderBy: { createdAt: 'desc' },
+    
   });
 };
 
 // get single leave request
 const getSingleLeaveRequest = async (id: string) => {
   return prisma.leaveRequest.findUniqueOrThrow({ where: { id }, select: leaveSelectFields });
+};
+
+
+
+const getMyLeaveRequests = async (userId: string) => {
+  return prisma.leaveRequest.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    select: leaveSelectFields,
+  });
 };
 
 // approve leave
@@ -138,6 +149,7 @@ export const leaveService = {
   applyForLeave,
   getAllLeaveRequests,
   getSingleLeaveRequest,
+  getMyLeaveRequests,
   approveLeave,
   rejectLeave,
   cancelLeave,

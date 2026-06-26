@@ -24,5 +24,11 @@ router.patch('/:id/read', authMiddleware, notificationController.markAsRead);
 // PATCH /api/notifications/me/read-all
 router.patch('/me/read-all', authMiddleware, notificationController.markAllAsRead);
 
+router.get(
+  "/",
+  authMiddleware,
+  requireRole("ADMIN"),
+  notificationController.getAllNotifications
+);
 
 export const notificationRoutes = router;

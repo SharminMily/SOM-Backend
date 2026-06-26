@@ -8,9 +8,11 @@ import requireRole from '../../middlewares/requireRole.js';
 
 const router = Router();
 
-router.post('/clock-in', authMiddleware, validateRequest(attendanceValidation.clockInSchema), attendanceController.clockIn);
-router.patch('/clock-out', authMiddleware, attendanceController.clockOut);
+router.post('/clock-in', authMiddleware,requireRole("EMPLOYEE", "MANAGER"), validateRequest(attendanceValidation.clockInSchema), attendanceController.clockIn);
+router.patch('/clock-out', authMiddleware, requireRole("EMPLOYEE", "MANAGER"),attendanceController.clockOut);
 router.get('/me', authMiddleware, attendanceController.getMyAttendance);
+
+
 router.get('/user/:id', authMiddleware, requireRole('ADMIN', 'MANAGER'), attendanceController.getUserAttendance);
 router.get('/department/:id', authMiddleware, requireRole('ADMIN', 'MANAGER'), attendanceController.getDepartmentAttendance);
 router.patch('/:id', authMiddleware, requireRole('ADMIN'), validateRequest(attendanceValidation.overrideSchema), attendanceController.overrideAttendance);

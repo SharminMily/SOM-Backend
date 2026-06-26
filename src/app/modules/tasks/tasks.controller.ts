@@ -45,4 +45,22 @@ const deleteComment = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'Comment deleted successfully', data: null });
 });
 
-export const taskController = { getProjectTasks, createTask, getTaskById, updateTask, deleteTask, getTaskComments, addComment, deleteComment };
+
+const getMyTasks = catchAsync(async (req: Request, res: Response) => {
+  if (!req.user?.id) {
+  throw new Error('Unauthorized');
+}
+  const result = await taskService.getMyTasks(req.user.id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'My tasks fetched successfully',
+    data: result,
+  });
+});
+
+
+export const taskController = { getProjectTasks, createTask, getTaskById, updateTask, deleteTask, getTaskComments, addComment, deleteComment,
+  getMyTasks
+  };
