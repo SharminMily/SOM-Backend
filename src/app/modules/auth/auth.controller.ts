@@ -20,6 +20,14 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
+ res.cookie('refreshToken', result.refreshToken, {
+    secure: config.node_env === 'production',
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -31,26 +39,32 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 // silent refresh
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
-  const refreshToken = req.cookies?.refreshToken;
+  const refreshTokenCookie = req.cookies?.refreshToken;
+  if (!refreshTokenCookie) throw new AppError(401, 'Refresh token not found');
 
-  if (!refreshToken) {
-    throw new AppError(401, 'Refresh token not found');
-  }
+  const result = await authService.refreshAccessToken(refreshTokenCookie);
 
-  const result = await authService.refreshAccessToken(refreshToken);
+  res.cookie('auth-token', result.accessToken, {
+    secure: config.node_env === 'production',
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 15 * 60 * 1000,
+  });
 
   res.cookie('refreshToken', result.refreshToken, {
     secure: config.node_env === 'production',
     httpOnly: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 7,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
     message: 'Token refreshed successfully',
-    data: { accessToken: result.accessToken },
+    data: { accessToken: result.accessToken, user: result.user },
   });
 });
 

@@ -1,14 +1,26 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { userController } from './user.controller.js';
+import authMiddleware from '../../middlewares/authMiddleware.js';
+import requireRole from '../../middlewares/requireRole.js';
 
 
 const router = express.Router();
 
 
+router.get("/me", authMiddleware, requireRole('ADMIN', 'MANAGER', 'EMPLOYEE'),  userController.getMyProfile);
+
+router.patch(
+  "/me",
+  authMiddleware ,
+  userController.updateMyProfile
+);
+
 router.get('/', userController.getAllUsersFromDB);
 router.get('/:id', userController.getSingleUserFromDB);
 router.delete('/', userController.deleteUserFromDB);
 router.post('/', userController.createUserIntoDB);
+
+
 
 
 export const userRoute = router;

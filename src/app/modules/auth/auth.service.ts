@@ -60,73 +60,19 @@ const loginUser = async (data: TLoginPayload) => {
     config.jwt.REFRESH_TOKEN_SECRET as string,
     config.jwt.REFRESH_TOKEN_EXPIRES_IN as string,
   );
+   await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: userData.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+  });
 
   return {
     accessToken,
     refreshToken,
   };
 };
-
-
-// const loginUser = async (payload: TLoginPayload) => {
-//   const user = await prisma.user.findUnique({
-//     where: { email: payload.email },
-//   });
-
-//   if (!user) {
-//     throw new AppError(404, 'User not found');
-//   }
-
-//   if (user.status === 'SUSPENDED') {
-//     throw new AppError(403, 'Your account is suspended');
-//   }
-
-//   if (!user.emailVerified) {
-//     throw new AppError(403, 'Please verify your email first');
-//   }
-
-//   const isPasswordMatch = await bcrypt.compare(payload.password, user.password);
-//   if (!isPasswordMatch) {
-//     throw new AppError(401, 'Invalid email or password');
-//   }
-
-//   const tokenPayload = buildTokenPayload(user);
-
-//   const accessToken = jwtHelpers.createToken(
-//     tokenPayload,
-//     config.jwt.ACCESS_TOKEN_SECRET,
-//     config.jwt.ACCESS_TOKEN_EXPIRES_IN,
-//   );
-
-//   const refreshToken = jwtHelpers.createToken(
-//     tokenPayload,
-//     config.jwt.REFRESH_TOKEN_SECRET,
-//     config.jwt.REFRESH_TOKEN_EXPIRES_IN,
-//   );
-
-//   // store refresh token in db
-//   await prisma.refreshToken.create({
-//     data: {
-//       token: refreshToken,
-//       userId: user.id,
-//       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-//     },
-//   });
-
-//   return {
-//     accessToken,
-//     refreshToken,
-//     user: {
-//       id: user.id,
-//       email: user.email,
-//       firstName: user.firstName,
-//       lastName: user.lastName,
-//       role: user.role,
-//       status: user.status,
-//       avatarUrl: user.avatarUrl,
-//     },
-//   };
-// };
 
 // silent refresh
 const refreshAccessToken = async (refreshToken: string) => {
@@ -184,7 +130,18 @@ const refreshAccessToken = async (refreshToken: string) => {
     },
   });
 
-  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  return { accessToken: newAccessToken, 
+    refreshToken: newRefreshToken,
+    user: {
+      id: storedToken.user.id,
+      email: storedToken.user.email,
+      firstName: storedToken.user.firstName,
+      lastName: storedToken.user.lastName,
+      role: storedToken.user.role,
+      status: storedToken.user.status,
+      avatarUrl: storedToken.user.avatarUrl,
+    },
+   };
 };
 
 // logout

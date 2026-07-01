@@ -9,6 +9,7 @@ import { notificationRoutes } from "../modules/notifications/notification.route.
 import { projectRoutes } from "../modules/projects/projects.route.js";
 import { payrollRoutes } from "../modules/payroll/payroll.route.js";
 import { taskRoutes } from "../modules/tasks/tasks.route.js";
+import { dashboardRoute } from "../modules/dashboard/dashboard.route.js";
 
 
 const router = Router();
@@ -54,6 +55,10 @@ const moduleRoutes = [
   {
      path: '/task',
      route: taskRoutes,
+  },
+  {
+     path: '/dashboard',
+     route: dashboardRoute,
   },
 ];
 

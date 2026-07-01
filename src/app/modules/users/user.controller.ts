@@ -73,10 +73,47 @@ const deleteUserFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+  if (!req.user) {
+  throw new AppError(status.UNAUTHORIZED, "Unauthorized");
+}
+  const userId = req.user.id;
+
+  const result = await userService.getMyProfileFromDB(userId);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Profile fetched successfully",
+    data: result,
+  });
+});
+
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+  if (!req.user) {
+  throw new AppError(status.UNAUTHORIZED, "Unauthorized");
+}
+  const userId = req.user.id;
+
+  const result = await userService.updateMyProfileIntoDB(
+    userId,
+    req.body
+  );
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Profile updated successfully",
+    data: result,
+  });
+});
+
 
 export const userController = {
   createUserIntoDB,
   getAllUsersFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,
+  getMyProfile,
+  updateMyProfile,
  };

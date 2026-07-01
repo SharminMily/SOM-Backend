@@ -8,7 +8,7 @@ import { Role } from '../../constants/enums.js';
 import AppError from '../../errors/AppError.js';
 import { jwtHelpers } from '../../helpers/jwtHelpers.js';
 
-import { Prisma } from '@prisma/client';
+import { Prisma, type User } from '@prisma/client';
 import config from '../../config/index.js';
 
 
@@ -126,10 +126,82 @@ const deleteUserFromDB = async (id: string) => {
   return result;
 };
 
+const getMyProfileFromDB = async (userId: string) => {
+  return await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      phone: true,
+      avatarUrl: true,
+      role: true,
+      status: true,
+      emailVerified: true,
+      joinedDate: true,
+      createdAt: true,
+
+      department: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+
+      manager: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+      },
+
+      leaveBalances: true,
+    },
+  });
+};
+
+const updateMyProfileIntoDB = async (
+  userId: string,
+  payload: Partial<User>
+) => {
+  const result = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+
+    data: {
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      phone: payload.phone,
+      avatarUrl: payload.avatarUrl,
+    },
+
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      phone: true,
+      avatarUrl: true,
+      role: true,
+      status: true,
+    },
+  });
+
+  return result;
+};
 
 export const userService = {
   createUserIntoDB,
   getSingleUserFromDB,
   getAllUsersFromDB,
   deleteUserFromDB,
+  getMyProfileFromDB,
+  updateMyProfileIntoDB
 };
