@@ -12,11 +12,18 @@ export interface TOverrideAttendancePayload {
 export const attendanceSelectFields = {
   id: true,
   date: true,
+  status: true,
   clockIn: true,
   clockOut: true,
-  status: true,
   note: true,
-  createdAt: true,
-  userId: true,
-  user: { select: { id: true, firstName: true, lastName: true, email: true } },
-} as const;
+
+  user: {
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true, 
+      role: true,
+    },
+  },
+};

@@ -8,8 +8,25 @@ import requireRole from '../../middlewares/requireRole.js';
 const router = Router();
 
 
+router.get(
+  "/admin",
+  authMiddleware,
+  requireRole("ADMIN"),
+  dashboardController.getAdminDashboard
+);
+
+
+router.get(
+  "/manager",
+  authMiddleware,
+  requireRole("MANAGER"),
+  dashboardController.getManagerDashboard
+);
+
 
 router.get('/employee', authMiddleware, requireRole('ADMIN', 'MANAGER', 'EMPLOYEE'),  dashboardController.getEmployeeDashboard);
+
+
 
 
 

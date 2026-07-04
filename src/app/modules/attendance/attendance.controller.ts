@@ -80,6 +80,17 @@ const result =
 );
 
 
+const getAllTodayAttendance = catchAsync(async (req: Request, res: Response) => {
+  const result = await attendanceService.getAllTodayAttendance();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Today's attendance fetched successfully",
+    data: result,
+  });
+});
+
 export const attendanceController = {
    clockIn, 
    clockOut, 
@@ -87,5 +98,6 @@ export const attendanceController = {
    getUserAttendance, 
    getDepartmentAttendance, 
    overrideAttendance,
-   getAttendanceStats    
+   getAttendanceStats,
+   getAllTodayAttendance   
   };

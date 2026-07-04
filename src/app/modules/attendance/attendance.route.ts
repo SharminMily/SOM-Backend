@@ -24,4 +24,10 @@ router.get(
   attendanceController.getAttendanceStats
 );
 
+router.get(
+  '/today',
+  authMiddleware,
+  requireRole('ADMIN', 'MANAGER'),
+  attendanceController.getAllTodayAttendance
+);
 export const attendanceRoutes = router;

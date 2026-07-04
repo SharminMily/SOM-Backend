@@ -3,7 +3,7 @@ import AppError from '../../errors/AppError.js';
 import { attendanceSelectFields, type TOverrideAttendancePayload } from './attendance.interface.js';
 
 // Grace period: 9:15 AM — after this, marked LATE
-const GRACE_HOUR = 9;
+const GRACE_HOUR = 8;
 const GRACE_MINUTE = 15;
 
 const getTodayDate = () => {
@@ -113,7 +113,6 @@ const overrideAttendance = async (id: string, data: TOverrideAttendancePayload) 
 };
 
 
-
 const getAttendanceStats = async (
   departmentId: string
 ) => {
@@ -147,6 +146,52 @@ const getAttendanceStats = async (
 };
 
 
+
+const getAllTodayAttendance = async () => {
+  const today = getTodayDate();
+
+  // Shob active employee ana — department filter chara
+  const employees = await prisma.user.findMany({
+    where: { status: 'ACTIVE' },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+       role: true, 
+    },
+  });
+
+  // Aajker shob existing attendance record
+  const todayRecords = await prisma.attendance.findMany({
+    where: { date: today },
+    select: attendanceSelectFields,
+  });
+
+  const recordMap = new Map(
+    todayRecords.map((r) => [r.user.id, r])
+  );
+
+  const merged = employees.map((emp) => {
+    const record = recordMap.get(emp.id);
+
+    if (record) return record;
+
+    return {
+      id: `absent-${emp.id}`,
+      status: 'ABSENT' as const,
+      date: today,
+      clockIn: null,
+      clockOut: null,
+      note: null,
+      user: emp,
+    };
+  });
+
+  return merged;
+};
+
+
 export const attendanceService = {
   clockIn,
   clockOut,
@@ -154,5 +199,6 @@ export const attendanceService = {
   getUserAttendance,
   getDepartmentAttendance,
   overrideAttendance,
-  getAttendanceStats
+  getAttendanceStats,
+   getAllTodayAttendance
 };

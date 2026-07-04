@@ -279,6 +279,7 @@ const getCurrentUser = async (userId: string) => {
       role: true,
       status: true,
       avatarUrl: true,
+      departmentId: true,
       emailVerified: true,
       createdAt: true,
       updatedAt: true,      
