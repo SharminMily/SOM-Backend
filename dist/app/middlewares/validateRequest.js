@@ -1,6 +1,11 @@
-import catchAsync from '../helpers/catchAsync.js';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const catchAsync_js_1 = __importDefault(require("../helpers/catchAsync.js"));
 const validateRequest = (schema) => {
-    return catchAsync(async (req, res, next) => {
+    return (0, catchAsync_js_1.default)(async (req, res, next) => {
         await schema.parseAsync({
             body: req.body,
             cookies: req.cookies,
@@ -8,5 +13,5 @@ const validateRequest = (schema) => {
         next();
     });
 };
-export default validateRequest;
+exports.default = validateRequest;
 //# sourceMappingURL=validateRequest.js.map

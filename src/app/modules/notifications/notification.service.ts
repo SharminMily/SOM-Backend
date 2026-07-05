@@ -6,7 +6,7 @@ import { notificationSelectFields, type TCreateNotificationPayload } from './not
 const createNotification = async (
   data: TCreateNotificationPayload
 ) => {
-  console.log("userId here:", data.userId);
+  // console.log("userId here:", data.userId);
 
   return prisma.notification.create({
     data: {

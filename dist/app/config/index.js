@@ -1,29 +1,37 @@
-import dotenv from "dotenv";
-import path from "path";
-dotenv.config({ path: path.join(process.cwd(), ".env") });
-// if (!process.env.ACCESS_TOKEN_SECRET) {
-//   throw new Error('ACCESS_TOKEN_SECRET is missing');
-// }
-// if (!process.env.ACCESS_TOKEN_EXPIRES_IN) {
-//   throw new Error('ACCESS_TOKEN_EXPIRES_IN is missing');
-// }
-export default {
-    //   node_env: process.env.NODE_ENV,
-    port: process.env.PORT,
-    //   client_site_url: process.env.CLIENT_SITE_URL,
-    //   cloudinary: {
-    //     CLOUD_NAME: process.env.CLOUD_NAME,
-    //     CLOUD_API_KEY: process.env.CLOUD_API_KEY,
-    //     CLOUD_API_SECRET: process.env.CLOUD_API_SECRET,
-    //   },
-    //  jwt: {
-    //     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || '',
-    //     ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN || '',
-    //     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || '',
-    //     REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN || '',
-    //     RESET_PASSWORD_SECRET: process.env.RESET_PASSWORD_SECRET || '',
-    //     RESET_PASSWORD_TOKEN_EXP_IN: process.env.RESET_PASSWORD_TOKEN_EXP_IN || '',
-    //     RESET_PASSWORD_LINK: process.env.RESET_PASSWORD_LINK || '',
-    //   },
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+const path_1 = __importDefault(require("path"));
+dotenv_1.default.config({
+    path: path_1.default.join(process.cwd(), ".env"),
+});
+// Optional: Validate required environment variables
+if (!process.env.ACCESS_TOKEN_SECRET) {
+    throw new Error("ACCESS_TOKEN_SECRET is missing in .env file");
+}
+if (!process.env.REFRESH_TOKEN_SECRET) {
+    throw new Error("REFRESH_TOKEN_SECRET is missing in .env file");
+}
+exports.default = {
+    node_env: process.env.NODE_ENV,
+    port: process.env.PORT || 5000,
+    jwt: {
+        ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+        ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN || "15m",
+        REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
+        REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d",
+        RESET_PASSWORD_SECRET: process.env.RESET_PASSWORD_SECRET,
+        RESET_PASSWORD_TOKEN_EXP_IN: process.env.RESET_PASSWORD_TOKEN_EXP_IN || "15m",
+        RESET_PASSWORD_LINK: process.env.RESET_PASSWORD_LINK,
+    },
+    email: {
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT || '587',
+        SMTP_USER: process.env.SMTP_USER,
+        SMTP_PASS: process.env.SMTP_PASS,
+    },
 };
 //# sourceMappingURL=index.js.map

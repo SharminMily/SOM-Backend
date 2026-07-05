@@ -1,4 +1,5 @@
-import { ZodError, } from 'zod';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const handleZodError = (err) => {
     const errorSources = err.issues.map((issue) => ({
         path: String(issue.path[issue.path.length - 1]),
@@ -11,5 +12,5 @@ const handleZodError = (err) => {
         errorSources,
     };
 };
-export default handleZodError;
+exports.default = handleZodError;
 //# sourceMappingURL=handleZodError.js.map

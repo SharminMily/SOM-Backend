@@ -3,9 +3,9 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "verbatimModuleSyntax": true,
+    "module": "CommonJS",
+    "moduleResolution": "Node10",
+    "verbatimModuleSyntax": false,
     "target": "ES2022",
 
     "esModuleInterop": true,
@@ -18,8 +18,6 @@
     "moduleDetection": "force",
     "sourceMap": true
   },
-  "include": [
-    "src/**/*" 
-  ],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

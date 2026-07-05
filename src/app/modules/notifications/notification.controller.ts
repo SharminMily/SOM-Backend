@@ -17,10 +17,10 @@ const createNotification = catchAsync(
       userId: req.user.id, // <-- IMPORTANT
     };
 
-    console.log(
-      "Creating notification with payload:",
-      payload
-    );
+    // console.log(
+    //   "Creating notification with payload:",
+    //   payload
+    // );
 
     const result =
       await notificationService.createNotification(

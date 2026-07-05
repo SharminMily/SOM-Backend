@@ -1,5 +1,7 @@
-import {} from 'express';
-export class ApiResponse {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApiResponse = void 0;
+class ApiResponse {
     static success(res, data, message = 'Success', statusCode = 200) {
         return res.status(statusCode).json({
             success: true,
@@ -28,4 +30,5 @@ export class ApiResponse {
         });
     }
 }
+exports.ApiResponse = ApiResponse;
 //# sourceMappingURL=ApiResponse.js.map

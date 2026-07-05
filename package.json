@@ -1,7 +1,6 @@
 {
    "name": "backend",
    "version": "1.0.0",
-   "type": "module",
    "description": "",
    "main": "dist/server.js",
    "devDependencies": {
@@ -18,7 +17,8 @@
    },
    "scripts": {
       "dev": "npx tsx --watch src/server.ts",
-      "build": "tsc",
+      "postinstall": "prisma generate",
+      "build": "prisma generate && tsc",
       "start": "node dist/server.js",
       "type-check:root": "tsc -p tsconfig.root.json",
       "test": "echo \"Error: no test specified\" && exit 1"
