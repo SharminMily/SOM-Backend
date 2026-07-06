@@ -15,10 +15,10 @@ router.patch(
   userController.updateMyProfile
 );
 
-router.get('/', userController.getAllUsersFromDB);
-router.get('/:id', userController.getSingleUserFromDB);
-router.delete('/', userController.deleteUserFromDB);
-router.post('/', userController.createUserIntoDB);
+router.get('/', authMiddleware, requireRole('ADMIN'),  userController.getAllUsersFromDB);
+router.get('/:id', authMiddleware, requireRole('ADMIN', 'MANAGER', 'EMPLOYEE'), userController.getSingleUserFromDB);
+router.delete('/', authMiddleware, requireRole('ADMIN'), userController.deleteUserFromDB);
+router.post('/', authMiddleware, requireRole('ADMIN', 'MANAGER', 'EMPLOYEE'),  userController.createUserIntoDB);
 
 
 

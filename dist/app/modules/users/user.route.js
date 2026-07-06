@@ -11,9 +11,9 @@ const requireRole_js_1 = __importDefault(require("../../middlewares/requireRole.
 const router = express_1.default.Router();
 router.get("/me", authMiddleware_js_1.default, (0, requireRole_js_1.default)('ADMIN', 'MANAGER', 'EMPLOYEE'), user_controller_js_1.userController.getMyProfile);
 router.patch("/me", authMiddleware_js_1.default, user_controller_js_1.userController.updateMyProfile);
-router.get('/', user_controller_js_1.userController.getAllUsersFromDB);
-router.get('/:id', user_controller_js_1.userController.getSingleUserFromDB);
-router.delete('/', user_controller_js_1.userController.deleteUserFromDB);
-router.post('/', user_controller_js_1.userController.createUserIntoDB);
+router.get('/', authMiddleware_js_1.default, (0, requireRole_js_1.default)('ADMIN'), user_controller_js_1.userController.getAllUsersFromDB);
+router.get('/:id', authMiddleware_js_1.default, (0, requireRole_js_1.default)('ADMIN', 'MANAGER', 'EMPLOYEE'), user_controller_js_1.userController.getSingleUserFromDB);
+router.delete('/', authMiddleware_js_1.default, (0, requireRole_js_1.default)('ADMIN'), user_controller_js_1.userController.deleteUserFromDB);
+router.post('/', authMiddleware_js_1.default, (0, requireRole_js_1.default)('ADMIN', 'MANAGER', 'EMPLOYEE'), user_controller_js_1.userController.createUserIntoDB);
 exports.userRoute = router;
 //# sourceMappingURL=user.route.js.map

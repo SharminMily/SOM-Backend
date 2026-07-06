@@ -10,9 +10,20 @@ const notFound_js_1 = __importDefault(require("./app/middlewares/notFound.js"));
 const globalErrorhandler_js_1 = __importDefault(require("./app/middlewares/globalErrorhandler.js"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://som-teal.vercel.app",
+];
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:3000',
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true,
 }));
 ;

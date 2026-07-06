@@ -7,10 +7,21 @@ import globalErrorHandler from './app/middlewares/globalErrorhandler.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://som-teal.vercel.app",
+];
+
 const app: Application = express();
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+   origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );;
