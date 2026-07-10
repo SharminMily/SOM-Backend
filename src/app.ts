@@ -7,8 +7,7 @@ import globalErrorHandler from './app/middlewares/globalErrorhandler.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
-const allowedOrigins = [
-  "http://localhost:3000",
+const allowedOrigins = [  
   "https://som-teal.vercel.app",
 ];
 

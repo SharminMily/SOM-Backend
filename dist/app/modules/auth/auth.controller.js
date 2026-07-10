@@ -8,7 +8,6 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_js_1 = __importDefault(require("../../helpers/catchAsync.js"));
 const AppError_js_1 = __importDefault(require("../../errors/AppError.js"));
 const auth_service_js_1 = require("./auth.service.js");
-const index_js_1 = __importDefault(require("../../config/index.js"));
 const sendResponse_js_1 = __importDefault(require("../../helpers/sendResponse.js"));
 const http_status_2 = __importDefault(require("http-status"));
 // login
@@ -16,16 +15,17 @@ const loginUser = (0, catchAsync_js_1.default)(async (req, res) => {
     const result = await auth_service_js_1.authService.loginUser(req.body);
     const { refreshToken } = result;
     res.cookie('auth-token', result.accessToken, {
-        secure: index_js_1.default.node_env === 'production',
+        // secure: config.node_env === 'production',
+        secure: true,
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.cookie('refreshToken', result.refreshToken, {
-        secure: index_js_1.default.node_env === 'production',
         httpOnly: true,
-        sameSite: 'lax',
+        secure: true,
+        sameSite: "none",
         path: '/',
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -45,16 +45,17 @@ const refreshToken = (0, catchAsync_js_1.default)(async (req, res) => {
         throw new AppError_js_1.default(401, 'Refresh token not found');
     const result = await auth_service_js_1.authService.refreshAccessToken(refreshTokenCookie);
     res.cookie('auth-token', result.accessToken, {
-        secure: index_js_1.default.node_env === 'production',
+        // secure: config.node_env === 'production',
+        secure: true,
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: "none",
         path: '/',
         maxAge: 15 * 60 * 1000,
     });
     res.cookie('refreshToken', result.refreshToken, {
-        secure: index_js_1.default.node_env === 'production',
         httpOnly: true,
-        sameSite: 'lax',
+        secure: true,
+        sameSite: "none",
         path: '/',
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -73,9 +74,11 @@ const logoutUser = (0, catchAsync_js_1.default)(async (req, res) => {
     }
     await auth_service_js_1.authService.logoutUser(refreshToken);
     res.clearCookie('refreshToken', {
-        secure: index_js_1.default.node_env === 'production',
         httpOnly: true,
-        sameSite: 'none',
+        secure: true,
+        sameSite: "none",
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     (0, sendResponse_js_1.default)(res, {
         statusCode: http_status_1.default.OK,

@@ -13,20 +13,21 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   const { refreshToken } = result;
 
  res.cookie('auth-token', result.accessToken, {
-  secure: config.node_env === 'production',
+  // secure: config.node_env === 'production',
+ secure: true,
   httpOnly: true,
-  sameSite: "lax",
-  path: "/",
+  sameSite: "none",
+    path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
- res.cookie('refreshToken', result.refreshToken, {
-    secure: config.node_env === 'production',
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+res.cookie('refreshToken', result.refreshToken, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: '/',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
 
   sendResponse(res, {
     success: true,
@@ -45,20 +46,20 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
   const result = await authService.refreshAccessToken(refreshTokenCookie);
 
   res.cookie('auth-token', result.accessToken, {
-    secure: config.node_env === 'production',
+    // secure: config.node_env === 'production',
+ secure: true,
     httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
+    sameSite: "none",
+        path: '/',
     maxAge: 15 * 60 * 1000,
   });
-
-  res.cookie('refreshToken', result.refreshToken, {
-    secure: config.node_env === 'production',
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+res.cookie('refreshToken', result.refreshToken, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: '/',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
 
   sendResponse(res, {
     statusCode: status.OK,
@@ -79,10 +80,12 @@ const logoutUser = catchAsync(async (req: Request, res: Response) => {
   await authService.logoutUser(refreshToken);
 
   res.clearCookie('refreshToken', {
-    secure: config.node_env === 'production',
-    httpOnly: true,
-    sameSite: 'none',
-  });
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: '/',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
 
   sendResponse(res, {
     statusCode: status.OK,
