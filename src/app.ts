@@ -8,13 +8,16 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 const allowedOrigins = [  
+  "http://localhost:3000",
   "https://som-teal.vercel.app",
+  
 ];
 
 const app: Application = express();
 app.use(
   cors({
    origin: (origin, callback) => {
+     console.log("Incoming origin:", JSON.stringify(origin));
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
