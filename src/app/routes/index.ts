@@ -60,6 +60,7 @@ const moduleRoutes = [
      path: '/dashboard',
      route: dashboardRoute,
   },
+ 
 ];
 
 moduleRoutes.forEach((item) => router.use(item.path, item.route));

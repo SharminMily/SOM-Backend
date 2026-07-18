@@ -13,8 +13,6 @@ import config from '../../config/index.js';
 
 
 // createUserIntoDB
-
-
 const createUserIntoDB = async (userData: TUserPayload) => {
   const { password, ...restData } = userData;
   try {
@@ -85,7 +83,6 @@ const createUserIntoDB = async (userData: TUserPayload) => {
   }
 };
 
-
 // get User
 const getAllUsersFromDB = async () => {
   const result = await prisma.user.findMany({
@@ -107,7 +104,6 @@ const getSingleUserFromDB = async (id: string) => {
   return result;
 };
 
-// update user by id
 // delete user
 const deleteUserFromDB = async (id: string) => {
   const userData = await prisma.user.findFirstOrThrow({
@@ -123,6 +119,34 @@ const deleteUserFromDB = async (id: string) => {
       id,
     },
   });
+  return result;
+};
+
+// update user by id
+const updateUserFromDB = async (id: string, payload: Partial<User>) => {
+  const userData = await prisma.user.findFirstOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  if (userData.status === 'SUSPENDED') {
+    throw new AppError(403, 'User is blocked');
+  }
+
+  // sensitive fields যেগুলো এখান দিয়ে update করা উচিত না
+  const restrictedFields = ['id', 'password', 'email', 'createdAt', 'updatedAt'];
+  restrictedFields.forEach((field) => {
+    delete (payload as any)[field];
+  });
+
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: payload,
+  });
+
   return result;
 };
 
@@ -202,6 +226,7 @@ export const userService = {
   getSingleUserFromDB,
   getAllUsersFromDB,
   deleteUserFromDB,
+  updateUserFromDB,
   getMyProfileFromDB,
   updateMyProfileIntoDB
 };

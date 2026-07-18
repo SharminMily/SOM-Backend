@@ -58,7 +58,19 @@ const getSingleUserFromDB = catchAsync(async (req: Request, res: Response) => {
 });
 
 
-// update user by id
+// update/edit user
+const updateUserFromDB = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const payload = req.body;
+  const result = await userService.updateUserFromDB(id, payload);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'user updated successfully',
+    data: result,
+  });
+});
 
 // delete user
 const deleteUserFromDB = catchAsync(async (req: Request, res: Response) => {
@@ -116,4 +128,5 @@ export const userController = {
   deleteUserFromDB,
   getMyProfile,
   updateMyProfile,
+  updateUserFromDB,
  };
