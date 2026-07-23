@@ -1,6 +1,46 @@
 import { prisma } from '../../shared/prisma.js';
 import AppError from '../../errors/AppError.js';
-import { notificationSelectFields, type TCreateNotificationPayload } from './notification.interface.js';
+import { notificationSelectFields, TCreateBroadcastNotificationPayload, type TCreateNotificationPayload } from './notification.interface.js';
+
+
+
+const createBroadcastNotification = async (
+  data: TCreateBroadcastNotificationPayload
+) => {
+  let users: { id: string }[];
+
+  if (data.target === 'ALL') {
+    users = await prisma.user.findMany({
+      where: { status: 'ACTIVE' },
+      select: { id: true },
+    });
+  } else if (data.target === 'ROLE') {
+    if (!data.roles || data.roles.length === 0) {
+      throw new AppError(400, 'roles is required when target is ROLE');
+    }
+    users = await prisma.user.findMany({
+      where: { role: { in: data.roles }, status: 'ACTIVE' },
+      select: { id: true },
+    });
+  } else {
+    throw new AppError(400, 'Invalid target');
+  }
+
+  if (users.length === 0) {
+    throw new AppError(404, 'No matching users found for this target');
+  }
+
+  const notificationsData = users.map((u) => ({
+    userId: u.id,
+    title: data.title,
+    message: data.message,
+    type: data.type,
+  }));
+
+  const result = await prisma.notification.createMany({ data: notificationsData });
+  return { sentTo: users.length, count: result.count };
+};
+
 
 // create single notification (used internally by other services)
 const createNotification = async (
@@ -138,6 +178,7 @@ const getAllNotifications = async (
 };
 
 export const notificationService = {
+  createBroadcastNotification,
   createNotification,
   createManyNotifications,
   getMyNotifications,

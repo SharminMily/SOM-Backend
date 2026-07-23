@@ -8,6 +8,13 @@ const router = Router();
 // GET /api/notifications/me?page=1&limit=20
 router.get('/me', authMiddleware, notificationController.getMyNotifications);
 
+router.post(
+  '/broadcast',
+  authMiddleware,
+  requireRole('ADMIN', 'MANAGER'),
+  notificationController.createBroadcastNotification
+);
+
 // GET /api/notifications/me/unread-count
 router.get('/me/unread-count', authMiddleware, notificationController.getUnreadCount);
 
