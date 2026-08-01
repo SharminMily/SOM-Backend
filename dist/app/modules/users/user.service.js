@@ -8,48 +8,26 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const prisma_js_1 = require("../../shared/prisma.js");
 const user_interface_js_1 = require("./user.interface.js");
 const AppError_js_1 = __importDefault(require("../../errors/AppError.js"));
-const jwtHelpers_js_1 = require("../../helpers/jwtHelpers.js");
 const client_1 = require("@prisma/client");
-const index_js_1 = __importDefault(require("../../config/index.js"));
 // createUserIntoDB
 const createUserIntoDB = async (userData) => {
     const { password, ...restData } = userData;
+    const existingUser = await prisma_js_1.prisma.user.findUnique({
+        where: { email: restData.email },
+    });
+    if (existingUser) {
+        throw new AppError_js_1.default(409, 'Email already exists');
+    }
+    const hashPassword = await bcrypt_1.default.hash(password, 12);
     try {
-        const existingUser = await prisma_js_1.prisma.user.findUnique({
-            where: { email: restData.email },
-        });
-        if (existingUser) {
-            throw new AppError_js_1.default(409, 'Email already exists');
-        }
-        const hashPassword = await bcrypt_1.default.hash(password, 12);
-        const newUserData = {
-            ...restData,
-            password: hashPassword,
-        };
-        // Create new user
         const newUser = await prisma_js_1.prisma.user.create({
-            data: newUserData,
+            data: {
+                ...restData,
+                password: hashPassword,
+            },
+            select: user_interface_js_1.publicUserSelectFields,
         });
-        // token payload
-        const tokenPayload = {
-            id: newUser.id,
-            email: newUser.email,
-            name: `${newUser.firstName} ${newUser.lastName}`,
-            phoneNumber: newUser.phone,
-            profileImage: newUser.avatarUrl ?? undefined,
-            role: newUser.role,
-            status: newUser.status,
-            departmentId: newUser.departmentId ?? undefined,
-            managerId: newUser.managerId ?? undefined,
-            joinedDate: newUser.joinedDate ?? undefined,
-        };
-        const accessToken = jwtHelpers_js_1.jwtHelpers.createToken(tokenPayload, index_js_1.default.jwt.ACCESS_TOKEN_SECRET, index_js_1.default.jwt.ACCESS_TOKEN_EXPIRES_IN);
-        const refreshToken = jwtHelpers_js_1.jwtHelpers.createToken(tokenPayload, index_js_1.default.jwt.REFRESH_TOKEN_SECRET, index_js_1.default.jwt.REFRESH_TOKEN_EXPIRES_IN);
-        return {
-            user: newUser,
-            accessToken,
-            refreshToken,
-        };
+        return newUser;
     }
     catch (error) {
         if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
@@ -58,13 +36,12 @@ const createUserIntoDB = async (userData) => {
                 if (field === 'email') {
                     throw new AppError_js_1.default(409, 'Email already exists');
                 }
-                else if (field === 'phoneNumber') {
-                    // console.error('Phone number conflict detected');
+                else if (field === 'phone') {
                     throw new AppError_js_1.default(409, 'Phone number already exists');
                 }
             }
         }
-        throw new AppError_js_1.default(500, 'Failed to create or login user');
+        throw new AppError_js_1.default(500, 'Failed to create user');
     }
 };
 // get User
@@ -85,7 +62,6 @@ const getSingleUserFromDB = async (id) => {
     }
     return result;
 };
-// update user by id
 // delete user
 const deleteUserFromDB = async (id) => {
     const userData = await prisma_js_1.prisma.user.findFirstOrThrow({
@@ -100,6 +76,29 @@ const deleteUserFromDB = async (id) => {
         where: {
             id,
         },
+    });
+    return result;
+};
+// update user by id
+const updateUserFromDB = async (id, payload) => {
+    const userData = await prisma_js_1.prisma.user.findFirstOrThrow({
+        where: {
+            id,
+        },
+    });
+    if (userData.status === 'SUSPENDED') {
+        throw new AppError_js_1.default(403, 'User is blocked');
+    }
+    // s
+    const restrictedFields = ['id', 'password', 'email', 'createdAt', 'updatedAt'];
+    restrictedFields.forEach((field) => {
+        delete payload[field];
+    });
+    const result = await prisma_js_1.prisma.user.update({
+        where: {
+            id,
+        },
+        data: payload,
     });
     return result;
 };
@@ -167,6 +166,7 @@ exports.userService = {
     getSingleUserFromDB,
     getAllUsersFromDB,
     deleteUserFromDB,
+    updateUserFromDB,
     getMyProfileFromDB,
     updateMyProfileIntoDB
 };

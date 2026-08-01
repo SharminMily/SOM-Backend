@@ -11,6 +11,7 @@ const requireRole_js_1 = __importDefault(require("../../middlewares/requireRole.
 const router = (0, express_1.Router)();
 // GET /api/notifications/me?page=1&limit=20
 router.get('/me', authMiddleware_js_1.default, notification_controller_js_1.notificationController.getMyNotifications);
+router.post('/broadcast', authMiddleware_js_1.default, (0, requireRole_js_1.default)('ADMIN', 'MANAGER'), notification_controller_js_1.notificationController.createBroadcastNotification);
 // GET /api/notifications/me/unread-count
 router.get('/me/unread-count', authMiddleware_js_1.default, notification_controller_js_1.notificationController.getUnreadCount);
 router.post('/', authMiddleware_js_1.default, (0, requireRole_js_1.default)('ADMIN', 'MANAGER'), notification_controller_js_1.notificationController.createNotification);

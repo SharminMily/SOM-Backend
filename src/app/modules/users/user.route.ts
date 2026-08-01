@@ -21,7 +21,7 @@ router.get('/:id', authMiddleware, requireRole('ADMIN', 'MANAGER', 'EMPLOYEE'), 
 router.delete('/:id', authMiddleware, requireRole('ADMIN'), userController.deleteUserFromDB);
 router.patch('/:id', authMiddleware, requireRole('ADMIN'), userController.updateUserFromDB);
 
-router.post('/', authMiddleware, requireRole('ADMIN', 'MANAGER', 'EMPLOYEE'),  userController.createUserIntoDB);
+router.post('/', userController.createUserIntoDB);
 
 
 

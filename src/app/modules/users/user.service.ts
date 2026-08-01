@@ -15,71 +15,39 @@ import config from '../../config/index.js';
 // createUserIntoDB
 const createUserIntoDB = async (userData: TUserPayload) => {
   const { password, ...restData } = userData;
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email: restData.email },
+  });
+
+  if (existingUser) {
+    throw new AppError(409, 'Email already exists');
+  }
+
+  const hashPassword = await bcrypt.hash(password, 12);
+
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email: restData.email },
-    });
-
-    if (existingUser) {
-      throw new AppError(409, 'Email already exists');
-    }
-
-    const hashPassword = await bcrypt.hash(password, 12);
-
-    const newUserData = {
-      ...restData,
-      password: hashPassword,
-    };
-
-    // Create new user
     const newUser = await prisma.user.create({
-      data: newUserData,
+      data: {
+        ...restData,
+        password: hashPassword,
+      },
+      select: publicUserSelectFields,
     });
 
-    // token payload
-  const tokenPayload = {
-  id: newUser.id,
-  email: newUser.email,
-  name: `${newUser.firstName} ${newUser.lastName}`,
-  phoneNumber: newUser.phone,
-  profileImage: newUser.avatarUrl ?? undefined,
-  role: newUser.role,
-  status: newUser.status,
-  departmentId: newUser.departmentId ?? undefined,
-  managerId: newUser.managerId ?? undefined,
-  joinedDate: newUser.joinedDate ?? undefined,
-};
-
-    const accessToken = jwtHelpers.createToken(
-      tokenPayload,
-      config.jwt.ACCESS_TOKEN_SECRET as string,
-      config.jwt.ACCESS_TOKEN_EXPIRES_IN as string,
-    );
-    const refreshToken = jwtHelpers.createToken(
-      tokenPayload,
-      config.jwt.REFRESH_TOKEN_SECRET as string,
-      config.jwt.REFRESH_TOKEN_EXPIRES_IN as string,
-    );
-
-    return {
-      user: newUser,
-      accessToken,
-      refreshToken,
-    };
+    return newUser;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.[0];
         if (field === 'email') {
           throw new AppError(409, 'Email already exists');
-        } else if (field === 'phoneNumber') {
-          // console.error('Phone number conflict detected');
+        } else if (field === 'phone') {
           throw new AppError(409, 'Phone number already exists');
         }
       }
     }
-
-    throw new AppError(500, 'Failed to create or login user');
+    throw new AppError(500, 'Failed to create user');
   }
 };
 
@@ -134,7 +102,7 @@ const updateUserFromDB = async (id: string, payload: Partial<User>) => {
     throw new AppError(403, 'User is blocked');
   }
 
-  // sensitive fields যেগুলো এখান দিয়ে update করা উচিত না
+  // s
   const restrictedFields = ['id', 'password', 'email', 'createdAt', 'updatedAt'];
   restrictedFields.forEach((field) => {
     delete (payload as any)[field];

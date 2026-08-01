@@ -8,27 +8,17 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_js_1 = __importDefault(require("../../helpers/catchAsync.js"));
 const user_service_js_1 = require("./user.service.js");
 const sendResponse_js_1 = __importDefault(require("../../helpers/sendResponse.js"));
-const index_js_1 = __importDefault(require("../../config/index.js"));
 const AppError_js_1 = __importDefault(require("../../errors/AppError.js"));
 const createUserIntoDB = (0, catchAsync_js_1.default)(async (req, res) => {
     if (!req.body || !req.body.email || !req.body.password) {
         throw new AppError_js_1.default(400, 'Email and password are required');
     }
     const result = await user_service_js_1.userService.createUserIntoDB(req.body);
-    res.cookie('refreshToken', result.refreshToken, {
-        secure: index_js_1.default.node_env === 'production',
-        httpOnly: true,
-        sameSite: 'none',
-        maxAge: 1000 * 60 * 60 * 24 * 365,
-    });
     (0, sendResponse_js_1.default)(res, {
-        statusCode: http_status_1.default.OK,
+        statusCode: http_status_1.default.CREATED,
         success: true,
-        message: 'User registered and logged in successfully',
-        data: {
-            user: result.user,
-            accessToken: result.accessToken,
-        },
+        message: 'User created successfully',
+        data: result,
     });
 });
 // getAllUsersFromDB
@@ -52,7 +42,18 @@ const getSingleUserFromDB = (0, catchAsync_js_1.default)(async (req, res) => {
         data: result,
     });
 });
-// update user by id
+// update/edit user
+const updateUserFromDB = (0, catchAsync_js_1.default)(async (req, res) => {
+    const id = req.params.id;
+    const payload = req.body;
+    const result = await user_service_js_1.userService.updateUserFromDB(id, payload);
+    (0, sendResponse_js_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'user updated successfully',
+        data: result,
+    });
+});
 // delete user
 const deleteUserFromDB = (0, catchAsync_js_1.default)(async (req, res) => {
     const id = req.params.id;
@@ -97,5 +98,6 @@ exports.userController = {
     deleteUserFromDB,
     getMyProfile,
     updateMyProfile,
+    updateUserFromDB,
 };
 //# sourceMappingURL=user.controller.js.map

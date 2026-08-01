@@ -11,11 +11,13 @@ const globalErrorhandler_js_1 = __importDefault(require("./app/middlewares/globa
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
 const allowedOrigins = [
+    "http://localhost:3000",
     "https://som-teal.vercel.app",
 ];
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: (origin, callback) => {
+        //  console.log("Incoming origin:", JSON.stringify(origin));
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         }

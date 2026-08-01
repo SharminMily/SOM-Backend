@@ -7,6 +7,38 @@ exports.notificationService = void 0;
 const prisma_js_1 = require("../../shared/prisma.js");
 const AppError_js_1 = __importDefault(require("../../errors/AppError.js"));
 const notification_interface_js_1 = require("./notification.interface.js");
+const createBroadcastNotification = async (data) => {
+    let users;
+    if (data.target === 'ALL') {
+        users = await prisma_js_1.prisma.user.findMany({
+            where: { status: 'ACTIVE' },
+            select: { id: true },
+        });
+    }
+    else if (data.target === 'ROLE') {
+        if (!data.roles || data.roles.length === 0) {
+            throw new AppError_js_1.default(400, 'roles is required when target is ROLE');
+        }
+        users = await prisma_js_1.prisma.user.findMany({
+            where: { role: { in: data.roles }, status: 'ACTIVE' },
+            select: { id: true },
+        });
+    }
+    else {
+        throw new AppError_js_1.default(400, 'Invalid target');
+    }
+    if (users.length === 0) {
+        throw new AppError_js_1.default(404, 'No matching users found for this target');
+    }
+    const notificationsData = users.map((u) => ({
+        userId: u.id,
+        title: data.title,
+        message: data.message,
+        type: data.type,
+    }));
+    const result = await prisma_js_1.prisma.notification.createMany({ data: notificationsData });
+    return { sentTo: users.length, count: result.count };
+};
 // create single notification (used internally by other services)
 const createNotification = async (data) => {
     // console.log("userId here:", data.userId);
@@ -116,6 +148,7 @@ const getAllNotifications = async (page = 1, limit = 20) => {
     };
 };
 exports.notificationService = {
+    createBroadcastNotification,
     createNotification,
     createManyNotifications,
     getMyNotifications,

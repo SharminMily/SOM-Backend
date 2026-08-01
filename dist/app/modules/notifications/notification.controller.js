@@ -9,6 +9,28 @@ const catchAsync_js_1 = __importDefault(require("../../helpers/catchAsync.js"));
 const notification_service_js_1 = require("./notification.service.js");
 const sendResponse_js_1 = __importDefault(require("../../helpers/sendResponse.js"));
 const AppError_js_1 = __importDefault(require("../../errors/AppError.js"));
+const createBroadcastNotification = (0, catchAsync_js_1.default)(async (req, res) => {
+    if (!req.user) {
+        throw new AppError_js_1.default(401, 'Unauthorized');
+    }
+    const { target, roles, title, message, type } = req.body;
+    if (!title || !message || !type) {
+        throw new AppError_js_1.default(400, 'title, message and type are required');
+    }
+    const result = await notification_service_js_1.notificationService.createBroadcastNotification({
+        target,
+        roles: roles,
+        title,
+        message,
+        type: type,
+    });
+    (0, sendResponse_js_1.default)(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Notifications sent successfully',
+        data: result,
+    });
+});
 // Create Notification
 const createNotification = (0, catchAsync_js_1.default)(async (req, res) => {
     if (!req.user) {
@@ -16,12 +38,8 @@ const createNotification = (0, catchAsync_js_1.default)(async (req, res) => {
     }
     const payload = {
         ...req.body,
-        userId: req.user.id, // <-- IMPORTANT
+        userId: req.user.id,
     };
-    // console.log(
-    //   "Creating notification with payload:",
-    //   payload
-    // );
     const result = await notification_service_js_1.notificationService.createNotification(payload);
     (0, sendResponse_js_1.default)(res, {
         statusCode: 201,
@@ -80,6 +98,7 @@ const getAllNotifications = (0, catchAsync_js_1.default)(async (req, res) => {
     });
 });
 exports.notificationController = {
+    createBroadcastNotification,
     createNotification,
     getMyNotifications,
     getUnreadCount,

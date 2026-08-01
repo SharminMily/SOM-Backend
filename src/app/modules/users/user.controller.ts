@@ -8,26 +8,17 @@ import AppError from '../../errors/AppError.js';
 
 
 const createUserIntoDB = catchAsync(async (req: Request, res: Response) => {
-
   if (!req.body || !req.body.email || !req.body.password) {
     throw new AppError(400, 'Email and password are required');
   }
 
   const result = await userService.createUserIntoDB(req.body);
-  res.cookie('refreshToken', result.refreshToken, {
-    secure: config.node_env === 'production',
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 365,
-  });
+
   sendResponse(res, {
-    statusCode: status.OK,
+    statusCode: status.CREATED,
     success: true,
-    message: 'User registered and logged in successfully',
-    data: {
-      user: result.user,
-      accessToken: result.accessToken,
-    },
+    message: 'User created successfully',
+    data: result,
   });
 });
 
