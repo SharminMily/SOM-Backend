@@ -25,7 +25,6 @@ backend/
 ```bash
 cd backend
 npm install
-cp .env.example .env
 npm run dev
 ```
 
@@ -41,7 +40,6 @@ npm run dev
 | Departments | `/api/departments` |
 | Attendance | `/api/attendance` |
 | Leave | `/api/leave` |
-| Payroll | `/api/payroll` |
 | Projects | `/api/projects` |
 | Tasks | `/api/tasks` |
 | Announcements | `/api/announcements` |
